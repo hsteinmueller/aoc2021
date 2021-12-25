@@ -1,0 +1,154 @@
+has to be sorted
+D highest cost -> least moves
+a can move a lot
+they can only go out -> in,
+and only in their correct room
+
+PART1
+#...........#
+###D#D#B#A###
+  #C#A#B#C#
+
+
+PART2
+#...........#
+###D#D#B#A###
+  #D#C#B#A#
+  #D#B#A#C#
+  #C#A#B#C#
+
+
+part 1 by hand:
+
+1.
+D/A to the sides: 6000 + 6
+Bs over: 50*2 = 100
+A from A/C to left side: 8
+C over: 600
+
+#AA.......D.#
+###D#B#.#.###
+  #C#B#C#.#
+
+both Ds in: 3000 + 8000
+C over: 700
+As in: 2*3
+=> 18420
+
+
+2.
+A/C to the sides: 300 + 9
+Ds over: 7000 + 8000
+A to the side: 5
+Bs over: 100
+
+#AA.......C.#
+###.#B#.#D###
+  #C#B#.#D#
+
+Cs in: 800 + 400
+As in: 6
+
+=> 16620 too high
+
+
+3.
+Bs to the right: 50 * 2
+A to the left: 8 (TODO)
+C over: 600
+Ds over: 7000 + 8000
+
+#.A.......BB#
+###.#.#.#D###
+  #C#A#C#D#
+
+C over: 700
+As in: 3 + 5
+Bs in: 2 * 70
+
+=> 16556 not correct
+
+
+4. (Bs andere seite, A dafür rechts)
+Bs to the left: 70 * 2
+A to the right: 2
+C over: 600
+Ds over: 7000 + 8000
+
+#BB.......A.#
+###.#.#.#D###
+  #C#A#C#D#
+
+C over: 700
+As in: 9 + 5
+Bs in: 2 * 50
+
+=> also 16556
+
+
+5. (1 b left, 1 right)
+Bs to the left: 60 + 60
+A to the right: 2
+C over: 600
+Ds over: 7000 + 8000
+
+#.B.......AB#
+###.#.#.#D###
+  #C#A#C#D#
+
+C over: 700
+As in: 9 + 5
+Bs in: 50 + 70
+
+=> also 16556
+
+
+6. (1 b left, 1 right)
+A out: 3
+Bs to the left: 50 + 60
+C over: 600
+Ds over: 7000 + 8000
+
+#.B.......BA#
+###.#.#.#D###
+  #C#A#C#D#
+
+C over: 700
+A over: 6
+Bs in: 50 + 60
+A in: 9
+
+=> also 16538 best one yet
+
+
+7. (2 bs left, one more than the other)
+A out right: 3
+Bs to the left: 60 + 50
+
+#.B.B......A#
+###D#D#.#.###
+  #C#A#.#C#
+
+C over: 600
+D over: 7000
+
+#.B.B......A#
+###D#.#.#.###
+  #C#A#C#D#
+
+A out right: 7
+Bs in: 30 + 40
+
+#.........AA#
+###D#B#.#.###
+  #C#B#C#D#
+
+D over: 8000
+C over: 700
+As in: 9*2
+
+#...........#
+###A#B#C#D###
+  #A#B#C#D#
+
+=> 16508 !!
