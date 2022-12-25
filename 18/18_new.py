@@ -154,7 +154,6 @@ def split(snail):
     return new, did
 
 
-# test splitting
 def test_split():
     p = parse([[[[0, 7], 4], [15, [0, 13]]], [1, 1]])
     print(p)
@@ -166,35 +165,41 @@ def test_split():
     print(t, did)
 
 
-# test_get_search_path()
-# test_split()
-# test_explode()
-# test_magnitude()  # THIS WORKS
+def reduce(snail):
+    did_exp = True
+    did_spl = True
+    t = snail
+    while did_exp or did_spl:
+        t, did_exp = explode(t)
+        if did_exp:
+            continue
+        t, did_spl = split(t)
+    return t
+
 
 ll = [ast.literal_eval(x) for x in open("18.in").read().split('\n')]
+
+ll_parsed = [parse(l) for l in ll]
 
 did_explode = True
 did_split = False
 
-parsed_snail = parse(ll[0])
+parsed_snail = ll_parsed[0]
 
 for i in range(len(ll) - 1):
-    current_parsed_snail = parse(ll[i + 1])
+    current_parsed_snail = ll_parsed[i + 1]
     tmp = add_parsed(parsed_snail, current_parsed_snail)
-
-    did_explode = True
-    did_split = True
-    while did_explode or did_split:
-
-        tmp, did_explode = explode(tmp)
-        if did_explode:
-            continue
-        tmp, did_split = split(tmp)
-
-    parsed_snail = tmp
-    print(parsed_snail)
-
-print(parsed_snail)
+    parsed_snail = reduce(tmp)
 
 res = magnitude_parsed(parsed_snail)
-print(res)
+print(f"part1: {res}")
+
+maximum = 0
+for (a, b) in ((x, y) for x in ll_parsed for y in ll_parsed):
+    s1 = add_parsed(a, b)
+    s1 = reduce(s1)
+    maximum = max(maximum, magnitude_parsed(s1))
+    s2 = add_parsed(b, a)
+    s2 = reduce(s2)
+    maximum = max(maximum, magnitude_parsed(s2))
+print(f"part2: {maximum}")
