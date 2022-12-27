@@ -1,0 +1,56 @@
+inp w : mul x 0 : add x z : mod x 26 : div z 1  : add x 13  : eql x w : eql x 0 : mul y 0 : add y 25 : mul y x : add y 1 : mul z y : mul y 0 : add y w : add y 10 : mul y x : add z y
+inp w : mul x 0 : add x z : mod x 26 : div z 1  : add x 11  : eql x w : eql x 0 : mul y 0 : add y 25 : mul y x : add y 1 : mul z y : mul y 0 : add y w : add y 16 : mul y x : add z y
+inp w : mul x 0 : add x z : mod x 26 : div z 1  : add x 11  : eql x w : eql x 0 : mul y 0 : add y 25 : mul y x : add y 1 : mul z y : mul y 0 : add y w : add y 0  : mul y x : add z y
+inp w : mul x 0 : add x z : mod x 26 : div z 1  : add x 10  : eql x w : eql x 0 : mul y 0 : add y 25 : mul y x : add y 1 : mul z y : mul y 0 : add y w : add y 13 : mul y x : add z y
+inp w : mul x 0 : add x z : mod x 26 : div z 26 : add x -14 : eql x w : eql x 0 : mul y 0 : add y 25 : mul y x : add y 1 : mul z y : mul y 0 : add y w : add y 7  : mul y x : add z y
+inp w : mul x 0 : add x z : mod x 26 : div z 26 : add x -4  : eql x w : eql x 0 : mul y 0 : add y 25 : mul y x : add y 1 : mul z y : mul y 0 : add y w : add y 11 : mul y x : add z y
+inp w : mul x 0 : add x z : mod x 26 : div z 1  : add x 11  : eql x w : eql x 0 : mul y 0 : add y 25 : mul y x : add y 1 : mul z y : mul y 0 : add y w : add y 11 : mul y x : add z y
+inp w : mul x 0 : add x z : mod x 26 : div z 26 : add x -3  : eql x w : eql x 0 : mul y 0 : add y 25 : mul y x : add y 1 : mul z y : mul y 0 : add y w : add y 10 : mul y x : add z y
+inp w : mul x 0 : add x z : mod x 26 : div z 1  : add x 12  : eql x w : eql x 0 : mul y 0 : add y 25 : mul y x : add y 1 : mul z y : mul y 0 : add y w : add y 16 : mul y x : add z y
+inp w : mul x 0 : add x z : mod x 26 : div z 26 : add x -12 : eql x w : eql x 0 : mul y 0 : add y 25 : mul y x : add y 1 : mul z y : mul y 0 : add y w : add y 8  : mul y x : add z y
+inp w : mul x 0 : add x z : mod x 26 : div z 1  : add x 13  : eql x w : eql x 0 : mul y 0 : add y 25 : mul y x : add y 1 : mul z y : mul y 0 : add y w : add y 15 : mul y x : add z y
+inp w : mul x 0 : add x z : mod x 26 : div z 26 : add x -12 : eql x w : eql x 0 : mul y 0 : add y 25 : mul y x : add y 1 : mul z y : mul y 0 : add y w : add y 2  : mul y x : add z y
+inp w : mul x 0 : add x z : mod x 26 : div z 26 : add x -15 : eql x w : eql x 0 : mul y 0 : add y 25 : mul y x : add y 1 : mul z y : mul y 0 : add y w : add y 5  : mul y x : add z y
+inp w : mul x 0 : add x z : mod x 26 : div z 26 : add x -12 : eql x w : eql x 0 : mul y 0 : add y 25 : mul y x : add y 1 : mul z y : mul y 0 : add y w : add y 10 : mul y x : add z y
+
+https://github.com/dphilipson/advent-of-code-2021/blob/master/src/days/day24.rs
+https://www.ericburden.work/blog/2022/01/05/advent-of-code-2021-day-24/
+
+fn(input, divider, number1, number2):
+    w = inp
+    x = x * 0
+    x = x + z
+    x = x % 26
+    z = z // divider (round to zero)
+    x = x + number
+    if x == w:
+        x = 1
+    else:
+        x = 0
+    if x == 0:
+        x = 1
+    else:
+        x = 0
+    y = y * 0
+    y = y + 25
+    y = y * x
+    y = y+1
+    z = z * y
+    y = y * 0
+    y = y + w
+    y = y + number2
+    y = y * x
+    z = z * y
+
+
+fn(input, divider, number1, number2):
+    x = z % 26 + number
+    z = z // divider (round to zero)
+    if x != inp:
+        z = z * 26
+        Z = z + (inp + number2)
+
+=> z is a stack
+- divider == 1  -> w + offset is added
+- divider == 26 -> last value deleted OR last value replaced
+-> 1/26 are equally common, we NEED to pop if divider == 26 (dont replace)
