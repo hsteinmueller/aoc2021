@@ -12,12 +12,19 @@ rules:
 import sys
 from copy import deepcopy
 
-sys.setrecursionlimit(1000000)
-
 COST = {'A': 1, 'B': 10, 'C': 100, 'D': 1000}
 DONE_STATE = ({0: ['A', 'A'], 1: ['B', 'B'], 2: ['C', 'C'], 3: ['D', 'D']}, list('.' * 11))
+DONE_STATE_PART2 = (
+    {0: ['A', 'A', 'A', 'A'], 1: ['B', 'B', 'B', 'B'], 2: ['C', 'C', 'C', 'C'], 3: ['D', 'D', 'D', 'D']},
+    list('.' * 11))
 START_STATE_EX = ({0: ['B', 'A'], 1: ['C', 'D'], 2: ['B', 'C'], 3: ['D', 'A']}, list('.' * 11))
 START_STATE_MY = ({0: ['D', 'C'], 1: ['D', 'A'], 2: ['B', 'B'], 3: ['A', 'C']}, list('.' * 11))
+START_STATE_EX_PART2 = (
+    {0: ['B', 'D', 'D', 'A'], 1: ['C', 'C', 'B', 'D'], 2: ['B', 'B', 'A', 'C'], 3: ['D', 'A', 'C', 'A']},
+    list('.' * 11))
+START_STATE_MY_PART2 = (
+    {0: ['D', 'D', 'D', 'C'], 1: ['D', 'C', 'B', 'A'], 2: ['B', 'B', 'A', 'B'], 3: ['A', 'A', 'C', 'C']},
+    list('.' * 11))
 
 GOALS = {'A': 0, 'B': 1, 'C': 2, 'D': 3}
 
@@ -42,16 +49,42 @@ def can_move_goal(state, col, row, pod):
     new_state = deepcopy(state)
     col_to_check = [True if state[0][col][i] == '.' else False for i in range(0, row)]
     free_col = (len(col_to_check) > 0 and all(col_to_check)) or row == 0
-    if hallway_free and free_col and state[0][goal][1] == '.' and state[0][goal][0] == '.':
-        new_state[0][col][row] = '.'
-        new_state[0][goal][1] = pod
-        cost = (len(to_check) + row + 2) * COST[pod]
-        return new_state, cost, True
-    if hallway_free and free_col and state[0][goal][1] == pod and state[0][goal][0] == '.':
-        new_state[0][col][row] = '.'
-        new_state[0][goal][0] = pod
-        cost = (len(to_check) + row + 1) * COST[pod]
-        return new_state, cost, True
+    if not PART2:
+        if hallway_free and free_col and state[0][goal][1] == '.' and state[0][goal][0] == '.':
+            new_state[0][col][row] = '.'
+            new_state[0][goal][1] = pod
+            cost = (len(to_check) + row + 2) * COST[pod]
+            return new_state, cost, True
+        if hallway_free and free_col and state[0][goal][1] == pod and state[0][goal][0] == '.':
+            new_state[0][col][row] = '.'
+            new_state[0][goal][0] = pod
+            cost = (len(to_check) + row + 1) * COST[pod]
+            return new_state, cost, True
+    else:
+        if hallway_free and free_col and state[0][goal][3] == '.' and state[0][goal][2] == '.' and state[0][goal][
+            1] == '.' and state[0][goal][0] == '.':
+            new_state[0][col][row] = '.'
+            new_state[0][goal][3] = pod
+            cost = (len(to_check) + row + 4) * COST[pod]
+            return new_state, cost, True
+        if hallway_free and free_col and state[0][goal][3] == pod and state[0][goal][2] == '.' and state[0][goal][
+            1] == '.' and state[0][goal][0] == '.':
+            new_state[0][col][row] = '.'
+            new_state[0][goal][2] = pod
+            cost = (len(to_check) + row + 3) * COST[pod]
+            return new_state, cost, True
+        if hallway_free and free_col and state[0][goal][3] == pod and state[0][goal][2] == pod and state[0][goal][
+            1] == '.' and state[0][goal][0] == '.':
+            new_state[0][col][row] = '.'
+            new_state[0][goal][1] = pod
+            cost = (len(to_check) + row + 2) * COST[pod]
+            return new_state, cost, True
+        if hallway_free and free_col and state[0][goal][3] == pod and state[0][goal][2] == pod and state[0][goal][
+            1] == pod and state[0][goal][0] == '.':
+            new_state[0][col][row] = '.'
+            new_state[0][goal][0] = pod
+            cost = (len(to_check) + row + 1) * COST[pod]
+            return new_state, cost, True
     return None, None, False
 
 
@@ -59,7 +92,8 @@ def can_move_goal(state, col, row, pod):
 # they can also move in the middle hallway
 def can_move_hallway(state, col, row, pod, goal_idx):
     already_done = GOALS[pod] == col
-    others_below_done = all([True if state[0][col][i] == pod else False for i in range(row, 2)])
+    below = 2 if not PART2 else 4
+    others_below_done = all([True if state[0][col][i] == pod else False for i in range(row, below)])
     if already_done and others_below_done:
         return None, None, False
 
@@ -88,23 +122,49 @@ def can_move_hallway_goal(state, way_idx):
     to_check = [i for i in range(start, end + 1)]
     hallway_free = all([True if state[1][i] == '.' else False for i in to_check])
     new_state = deepcopy(state)
-    if hallway_free and state[0][goal][1] == '.' and state[0][goal][0] == '.':
-        new_state[1][way_idx] = '.'
-        new_state[0][goal][1] = pod
-        cost = (len(to_check) + 2) * COST[pod]
-        return new_state, cost, True
-    if hallway_free and state[0][goal][1] == pod and state[0][goal][0] == '.':
-        new_state[1][way_idx] = '.'
-        new_state[0][goal][0] = pod
-        cost = (len(to_check) + 1) * COST[pod]
-        return new_state, cost, True
+    if not PART2:
+        if hallway_free and state[0][goal][1] == '.' and state[0][goal][0] == '.':
+            new_state[1][way_idx] = '.'
+            new_state[0][goal][1] = pod
+            cost = (len(to_check) + 2) * COST[pod]
+            return new_state, cost, True
+        if hallway_free and state[0][goal][1] == pod and state[0][goal][0] == '.':
+            new_state[1][way_idx] = '.'
+            new_state[0][goal][0] = pod
+            cost = (len(to_check) + 1) * COST[pod]
+            return new_state, cost, True
+    else:
+        if hallway_free and state[0][goal][3] == '.' and state[0][goal][2] == '.' and state[0][goal][1] == '.' and \
+                state[0][goal][0] == '.':
+            new_state[1][way_idx] = '.'
+            new_state[0][goal][3] = pod
+            cost = (len(to_check) + 4) * COST[pod]
+            return new_state, cost, True
+        if hallway_free and state[0][goal][3] == pod and state[0][goal][2] == '.' and state[0][goal][1] == '.' and \
+                state[0][goal][0] == '.':
+            new_state[1][way_idx] = '.'
+            new_state[0][goal][2] = pod
+            cost = (len(to_check) + 3) * COST[pod]
+            return new_state, cost, True
+        if hallway_free and state[0][goal][3] == pod and state[0][goal][2] == pod and state[0][goal][1] == '.' and \
+                state[0][goal][0] == '.':
+            new_state[1][way_idx] = '.'
+            new_state[0][goal][1] = pod
+            cost = (len(to_check) + 2) * COST[pod]
+            return new_state, cost, True
+        if hallway_free and state[0][goal][3] == pod and state[0][goal][2] == pod and state[0][goal][1] == pod and \
+                state[0][goal][0] == '.':
+            new_state[1][way_idx] = '.'
+            new_state[0][goal][0] = pod
+            cost = (len(to_check) + 1) * COST[pod]
+            return new_state, cost, True
     return None, None, False
 
 
 def solve(state):
     (bot, top) = state
     key = (tuple((k, tuple(v)) for k, v in bot.items()), tuple(top))
-    if state == DONE_STATE:
+    if (PART2 and state == DONE_STATE_PART2) or state == DONE_STATE:
         return 0
     if key in DP:
         return DP[key]
@@ -142,9 +202,9 @@ def solve(state):
 
 
 DP = {}
-x = solve(START_STATE_EX)
-print(x)
+PART2 = False
+print(f"part1: {solve(START_STATE_MY)}")
 
-# DP = {}
-x = solve(START_STATE_MY)
-print(x)
+DP = {}
+PART2 = True
+print(f"part2: {solve(START_STATE_MY_PART2)}")
